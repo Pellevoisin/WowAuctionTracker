@@ -100,5 +100,3 @@ for message in discordMessages:
 	if matchingAuctions is not None:
 		webhook = SyncWebhook.from_url(WEBHOOK_URL)
 		webhook.send(message)
-		webhook = SyncWebhook.from_url('https://discord.com/api/webhooks/[my-webhook]') # Initializing webhook
-		webhook.send(content="Hello World") # Executing webhook.
