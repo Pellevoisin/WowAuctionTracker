@@ -2,7 +2,7 @@ import json
 import requests
 import collections
 from requests.auth import HTTPBasicAuth
-from discord import Webhook, RequestsWebhookAdapter
+from discord import Webhook, SyncWebhook
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/909048587042844683/l40jqfXb9QKciiHm7iqVFTjggw0uSPbuVKh_A0azty3MxgppBIktCuOqABqGJamXpw1S"
 CLIENT_ID = "94b01e3ac4d54cfd8117d2f67b11bf63"
@@ -98,5 +98,7 @@ matchingAuctions = getValuableAuctions(SEARCHED_ITEMS, auctions)
 discordMessages = renderDiscordMessages(accessToken, matchingAuctions)
 for message in discordMessages:
 	if matchingAuctions is not None:
-		webhook = Webhook.from_url(WEBHOOK_URL, adapter=RequestsWebhookAdapter())
+		webhook = SyncWebhook.from_url(WEBHOOK_URL)
 		webhook.send(message)
+		webhook = SyncWebhook.from_url('https://discord.com/api/webhooks/[my-webhook]') # Initializing webhook
+		webhook.send(content="Hello World") # Executing webhook.
