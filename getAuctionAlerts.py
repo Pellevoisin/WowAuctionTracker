@@ -57,7 +57,7 @@ def getValuableAuctions(searched_items, auctionsJSON):
 	for auction in auctionsJSON['auctions']:
 		for item in searched_items:
 			if str(auction['item']['id']) in item['item_id']:
-				if auction['buyout']/auction['quantity'] < item['max_price'] * 10000:
+				if auction['buyout']/auction['quantity'] < item['max_price'] * 10000 and auction['buyout'] > 0:
 					matchingAuction = {
 						"item_id":str(auction['item']['id']), 
 						"buyout_price":auction['buyout']/10000, 
@@ -74,18 +74,18 @@ def getValuableAuctions(searched_items, auctionsJSON):
 
 def renderDiscordMessages(access_token, matching_auctions):
 	discordMessages = []
-	introMessage = "## Some interesting auctions have been found: ##"
+	introMessage = "***## De bonnes affaires potentielles en ce moment à l'HV: ##***"
 	discordMessages.append(introMessage)
 	result = collections.defaultdict(list)
 	for matchingAuction in matching_auctions:
 		result[matchingAuction['item_id']].append(matchingAuction)
 	sortedAuctions= list(result.values())
 	for auctions in sortedAuctions:
-		item_id_message = "# "+getItemName(access_token, auctions[0]['item_id'])+" #\r\n"
-		for auction in auctions[:MAX_AUCTIONS_RETURNED]:
-			item_id_message += "bid_price: "+setBoldDiscord(str(auction['bid_price']))+" | buyout_price: "+setBoldDiscord(str(auction['buyout_price']))
-			item_id_message += " | unit_bid_price: "+setBoldDiscord(str(auction['unit_bid_price']))+" | unit_buyout_price: "+setBoldDiscord(str(auction['unit_buyout_price']))
-			item_id_message += " | quantity: "+setBoldDiscord(str(auction['quantity']))+" | time_left: "+setBoldDiscord(str(auction['time_left']))
+		item_id_message = "*# "+getItemName(access_token, auctions[0]['item_id'])+" #*\r\n"
+		for index, auction in enumerate(auctions[:MAX_AUCTIONS_RETURNED]):
+			item_id_message += str(index + 1) + ": enchère prix unitaire: "+setBoldDiscord(str(round(auction['unit_bid_price'], 2)) + " PO")+" PO | achat imm. prix unitaire: "+setBoldDiscord(str(round(auction['unit_buyout_price'], 2)) + " PO")
+			item_id_message += " | enchère prix global: "+setBoldDiscord(str(round(auction['bid_price'], 2)) + " PO")+" | achat imm. prix global: "+setBoldDiscord(str(round(auction['buyout_price'], 2)) + " PO")
+			item_id_message += " | quantité: "+setBoldDiscord(str(auction['quantity']))+" | temps restant: "+setBoldDiscord(str(auction['time_left']))
 			item_id_message += "\r\n"
 		discordMessages.append(item_id_message)
 	return discordMessages
